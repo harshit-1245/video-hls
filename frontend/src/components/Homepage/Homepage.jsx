@@ -3,6 +3,7 @@ import Lottie from 'lottie-react';
 import './Homepage.css';
 import animated from '../../assets/animation.json';
 import download from "../../assets/downloadButton.png" 
+import Footer from '../footer/Footer';
 
 const Homepage = () => {
   return (
@@ -20,6 +21,7 @@ const Homepage = () => {
          <button className='download'>Download</button>
         </div>
       </div>
+     
     </>
   );
 }
