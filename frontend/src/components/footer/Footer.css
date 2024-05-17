@@ -71,6 +71,11 @@ ul{
 	color: #24262b;
 	background-color: #ffffff;
 }
+.message{
+   color: white;
+   margin-left: 30%;
+   margin-top: 50px;
+}
 
 /*responsive*/
 @media(max-width: 767px){

@@ -18,7 +18,7 @@ const Homepage = () => {
         </div>
         <div className="download-section">
           <input type="text" placeholder='paste your link' />
-         <button className='download'>Download</button>
+         <button className='download'>Convert </button>
         </div>
       </div>
      

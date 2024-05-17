@@ -79,3 +79,6 @@ body {
 .download-section button:hover {
     background-color: #f8c300;
 }
+.download{
+    font-size: large;
+}
