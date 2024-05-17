@@ -27,7 +27,7 @@ function App() {
     <>
     <Header/>
    <RouterProvider router={router}/>
-   <Body/>
+   {/* <Body/> */}
    <Footer/>
     </>
   );

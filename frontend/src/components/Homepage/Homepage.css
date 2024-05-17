@@ -1,0 +1,81 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.main-container {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(rgba(9, 0, 77, 0.65), rgba(9, 0, 77, 0.65)), url("../../assets/456549.jpg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.content {
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.text-content {
+    margin-bottom: 20px;
+}
+
+.text-content h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.text-content p {
+    font-size: 1.2em;
+}
+
+.animation {
+    width: 300px; /* Adjust size as needed */
+    height: 300px; /* Adjust size as needed */
+}
+
+.download-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.download-section input {
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+    width: 300px;
+}
+
+.download-section button {
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffcc00;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.download-section button:hover {
+    background-color: #f8c300;
+}

@@ -1,11 +1,27 @@
-import React from 'react'
+import React from 'react';
+import Lottie from 'lottie-react'; 
+import './Homepage.css';
+import animated from '../../assets/animation.json';
+import download from "../../assets/downloadButton.png" 
 
 const Homepage = () => {
   return (
-    <div>
-      happy home
-    </div>
-  )
+    <>
+      <div className="main-container">
+        <div className="content">
+          <div className="text-content">
+            <h1>Welcome to Youtofy</h1>
+            <p>Convert YouTube videos to MP3 easily.</p>
+          </div>
+          <Lottie animationData={animated} loop={true} className="animation" />
+        </div>
+        <div className="download-section">
+          <input type="text" placeholder='paste your link' />
+         <button className='download'>Download</button>
+        </div>
+      </div>
+    </>
+  );
 }
 
-export default Homepage
+export default Homepage;
