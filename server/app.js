@@ -61,7 +61,6 @@ app.post("/upload", upload.single('file'), (req, res) => {
     .outputOptions([
       '-codec:v libx264',
       '-codec:a aac',
-      '-vf scale=-1:144', // Rescale the video to 144p
       '-hls_time 10',
       '-hls_playlist_type vod',
       `-hls_segment_filename ${path.join(outputPath, 'segment%03d.ts')}`
