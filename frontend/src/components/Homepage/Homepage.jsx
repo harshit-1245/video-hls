@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Lottie from 'lottie-react'; 
 import './Homepage.css';
 import animated from '../../assets/animation.json';
-import download from "../../assets/downloadButton.png" 
-import Footer from '../footer/Footer';
+import axios from "axios";
 
 const Homepage = () => {
+  const [videoUrl, setVideoUrl] = useState('');
+  const [convertedVideoUrl, setConvertedVideoUrl] = useState('');
+  const [error, setError] = useState('');
+
+  const handleConvert = async () => {
+    try {
+      setError('');
+      setConvertedVideoUrl('');
+
+      const response = await axios.post("http://localhost:8000/convert", { url: videoUrl });
+
+      if (response.data.videoUrl) {
+        setConvertedVideoUrl(response.data.videoUrl);
+      } else {
+        setError('Failed to convert video.');
+      }
+    } catch (error) {
+      console.error(error);
+      setError('An error occurred while converting the video.');
+    }
+  };
+
   return (
     <>
       <div className="main-container">
@@ -17,11 +38,26 @@ const Homepage = () => {
           <Lottie animationData={animated} loop={true} className="animation" />
         </div>
         <div className="download-section">
-          <input type="text" placeholder='paste your link' />
-         <button className='download'>Convert </button>
+          <input
+            type="text"
+            placeholder='Paste your link'
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+          />
+          <button className='download' onClick={handleConvert}>Convert</button>
         </div>
+        {/* {convertedVideoUrl && (
+          <div className="result">
+            <p>Converted video available at:</p>
+            <a href={convertedVideoUrl} target="_blank" rel="noopener noreferrer">{convertedVideoUrl}</a>
+          </div>
+        )} */}
+        {error && (
+          <div className="error">
+            <p>{error}</p>
+          </div>
+        )}
       </div>
-     
     </>
   );
 }

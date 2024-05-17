@@ -1,24 +1,12 @@
 import express from "express";
 import cors from "cors";
-import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
 import { exec } from "child_process";
+import ytdl from "ytdl-core";
 
 const app = express();
-
-// Multer configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + uuidv4() + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage: storage });
 
 app.use(cors({
   origin: ["http://localhost:3000", "http://localhost:5173"],
@@ -39,30 +27,53 @@ app.get('/', (req, res) => {
   res.json({ message: "Testing my code" });
 });
 
-app.post("/upload", upload.single('file'), (req, res) => {
+app.post("/convert", async (req, res) => {
+  const { url } = req.body;
+
+  if (!url || !ytdl.validateURL(url)) {
+    return res.status(400).json({ error: 'Invalid YouTube URL' });
+  }
+
   const lessonId = uuidv4();
-  const videoPath = req.file.path;
   const outputPath = path.join(__dirname, "uploads", "courses", lessonId);
-  const hlsPath = path.join(outputPath, "index.m3u8");
+  const videoPath = path.join(outputPath, "video.mp4");
 
   if (!fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath, { recursive: true });
   }
 
-  const command = `ffmpeg -i ${videoPath} -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename ${path.join(outputPath, 'segment%03d.ts')} ${hlsPath}`;
+  try {
+    const stream = ytdl(url, { quality: 'highest' });
 
-  exec(command, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error: ${error.message}`);
-      return res.status(500).json({ error: 'Video conversion failed', details: error.message });
-    }
-    const videoUrl = `http://localhost:8000/uploads/courses/${lessonId}/index.m3u8`;
-    res.json({
-      message: "Video converted to HLS format",
-      videoUrl: videoUrl,
-      lessonId: lessonId
+    const downloadProcess = new Promise((resolve, reject) => {
+      const writeStream = fs.createWriteStream(videoPath);
+      stream.pipe(writeStream);
+      writeStream.on('finish', resolve);
+      writeStream.on('error', reject);
     });
-  });
+
+    await downloadProcess;
+
+    const outputFilePath = path.join(outputPath, "video_144p.mp4");
+    const command = `ffmpeg -i ${videoPath} -vf scale=256:144 -codec:v libx264 -codec:a aac ${outputFilePath}`;
+
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return res.status(500).json({ error: 'Video conversion failed', details: error.message });
+      }
+      const videoUrl = `http://localhost:8000/uploads/courses/${lessonId}/video_144p.mp4`;
+      res.json({
+        message: "Video converted to 144p MP4 format",
+        videoUrl: videoUrl,
+        lessonId: lessonId
+      });
+    });
+
+  } catch (error) {
+    console.error('Error during video download: ' + error.message);
+    res.status(500).json({ error: 'Video download failed', details: error.message });
+  }
 });
 
 const __dirname = path.resolve();
