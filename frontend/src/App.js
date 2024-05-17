@@ -7,7 +7,7 @@ import "./App.css";
 function App() {
   const playerRef = useRef(null);
   const videoLink =
-    "http://localhost:8000/uploads/courses/de6dba71-45b5-4065-a7b6-6d1d7362eb75/index.m3u8";
+    "http://localhost:8000/uploads/courses/b30c9f20-0f04-49a0-a595-750e2cb067cf/index.m3u8";
 
   const videoPlayerOptions = {
     controls: true,
