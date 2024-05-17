@@ -4,16 +4,9 @@ import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
-import ffmpeg from "fluent-ffmpeg";
+import { exec } from "child_process";
 
 const app = express();
-
-// Set the path to ffmpeg if not globally available
-const ffmpegPath = "C:/Users/ASUS/Documents/ffmpeg/ffmpeg-2024-05-13-git-37db0454e4-full_build/ffmpeg-2024-05-13-git-37db0454e4-full_build/bin/ffmpeg.exe"; // Update this path as per your installation
-const ffprobePath = "C:/Users/ASUS/Documents/ffmpeg/ffmpeg-2024-05-13-git-37db0454e4-full_build/ffmpeg-2024-05-13-git-37db0454e4-full_build/bin/ffprobe.exe"; // Update this path as per your installation
-
-ffmpeg.setFfmpegPath(ffmpegPath);
-ffmpeg.setFfprobePath(ffprobePath);
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -43,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads"));
 
 app.get('/', (req, res) => {
-  res.json({ message: "Hello chai aur code" });
+  res.json({ message: "Testing my code" });
 });
 
 app.post("/upload", upload.single('file'), (req, res) => {
@@ -56,29 +49,20 @@ app.post("/upload", upload.single('file'), (req, res) => {
     fs.mkdirSync(outputPath, { recursive: true });
   }
 
-  // Using fluent-ffmpeg
-  ffmpeg(videoPath)
-    .outputOptions([
-      '-codec:v libx264',
-      '-codec:a aac',
-      '-hls_time 10',
-      '-hls_playlist_type vod',
-      `-hls_segment_filename ${path.join(outputPath, 'segment%03d.ts')}`
-    ])
-    .output(hlsPath)
-    .on('end', () => {
-      const videoUrl = `http://localhost:8000/uploads/courses/${lessonId}/index.m3u8`;
-      res.json({
-        message: "Video converted to HLS format",
-        videoUrl: videoUrl,
-        lessonId: lessonId
-      });
-    })
-    .on('error', (err) => {
-      console.error('Error: ' + err.message);
-      res.status(500).json({ error: 'Video conversion failed', details: err.message });
-    })
-    .run();
+  const command = `ffmpeg -i ${videoPath} -codec:v libx264 -codec:a aac -hls_time 10 -hls_playlist_type vod -hls_segment_filename ${path.join(outputPath, 'segment%03d.ts')} ${hlsPath}`;
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return res.status(500).json({ error: 'Video conversion failed', details: error.message });
+    }
+    const videoUrl = `http://localhost:8000/uploads/courses/${lessonId}/index.m3u8`;
+    res.json({
+      message: "Video converted to HLS format",
+      videoUrl: videoUrl,
+      lessonId: lessonId
+    });
+  });
 });
 
 const __dirname = path.resolve();
