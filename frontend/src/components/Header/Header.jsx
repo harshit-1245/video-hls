@@ -12,8 +12,7 @@ const Header = () => {
         </div>
         <ul>
           <li><a href="#">Youtube to mp3</a></li>
-          <li><a href="#">Youtube to mp3</a></li>
-          <li><a href="#">Youtube to mp3</a></li>
+          
           <li><a href="#">Donate 💖</a></li>
         </ul>
       </nav>

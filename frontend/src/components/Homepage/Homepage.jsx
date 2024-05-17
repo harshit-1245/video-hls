@@ -11,7 +11,7 @@ const Homepage = () => {
         <div className="content">
           <div className="text-content">
             <h1>Welcome to Youtofy</h1>
-            <p>Convert YouTube videos to MP3 easily.</p>
+            <p>Download YouTube videos into 4k,1080p,720p,480p,360p,240p,144p</p>
           </div>
           <Lottie animationData={animated} loop={true} className="animation" />
         </div>
