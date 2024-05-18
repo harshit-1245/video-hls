@@ -91,7 +91,8 @@ const Homepage = () => {
       </div>
 
       <CookieConsent
-        location="bottom"
+      debug={true}
+        // location="bottom"
         buttonText="Accept"
         cookieName="cookieConsent"
         style={{ background: "#2B373B", color: "white" }}
