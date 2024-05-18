@@ -1,14 +1,16 @@
+/* General reset and styling */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-body {
+  }
+  
+  body {
     font-family: 'Poppins', sans-serif;
-}
-
-.main-container {
+  }
+  
+  /* Main container styling */
+  .main-container {
     background: linear-gradient(rgba(9, 0, 77, 0.65), rgba(9, 0, 77, 0.65)), url('../../assets/456549.jpg');
     background-size: cover;
     background-position: center;
@@ -35,6 +37,7 @@ body {
     margin: 0 auto;
   }
   
+  /* Download section styling */
   .download-section {
     display: flex;
     gap: 10px;
@@ -48,6 +51,7 @@ body {
     font-size: 16px;
   }
   
+  /* Video details styling */
   .video-details {
     display: flex;
     align-items: center;
@@ -106,5 +110,29 @@ body {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+  }
+  
+  /* Cookie consent banner styling */
+  .CookieConsent {
+    background: #2b373b !important;
+    color: white !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px !important;
+  }
+  
+  .CookieConsent button {
+    background-color: #4e503b !important;
+    color: white !important;
+    font-size: 13px !important;
+    padding: 10px 20px !important;
+    border: none !important;
+    border-radius: 5px !important;
+    cursor: pointer !important;
+  }
+  
+  .CookieConsent button:hover {
+    background-color: #3b4235 !important;
   }
   

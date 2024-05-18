@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Lottie from 'lottie-react'; 
+import Lottie from 'lottie-react';
 import './Homepage.css';
 import animated from '../../assets/animation.json';
-import axios from "axios";
-import CookieConsent from 'react-cookie-consent';
+import CookieConsent from "react-cookie-consent";
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState('');
-  const [showVideo, setShowVideo] = useState(false);
+  const [videoId, setVideoId] = useState('');
   const [cookieConsent, setCookieConsent] = useState(false);
 
   useEffect(() => {
@@ -17,20 +16,18 @@ const Homepage = () => {
     }
   }, []);
 
-  const handleLinkChange = (e) => {
-    const url = e.target.value;
-    setVideoUrl(url);
-
-    // Extract video ID from YouTube link
-    const videoId = url.split('v=')[1];
-    const ampersandPosition = videoId.indexOf('&');
-    if (ampersandPosition !== -1) {
-      setVideoUrl(videoId.substring(0, ampersandPosition));
-    } else {
-      setVideoUrl(videoId);
+  useEffect(() => {
+    if (videoUrl) {
+      const id = getVideoId(videoUrl);
+      if (id) {
+        setVideoId(id);
+      }
     }
+  }, [videoUrl]);
 
-    setShowVideo(true);
+  const getVideoId = (url) => {
+    const urlObj = new URL(url);
+    return urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop();
   };
 
   const handleConvert = async () => {
@@ -40,8 +37,9 @@ const Homepage = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/convert", { url: videoUrl });
-      console.log(response.data);
+      // Here you can handle the video download logic
+      console.log("Video URL:", videoUrl);
+      console.log("Converted Video ID:", videoId);
     } catch (error) {
       console.error(error);
     }
@@ -58,28 +56,38 @@ const Homepage = () => {
           <Lottie animationData={animated} loop={true} className="animation" />
         </div>
         <div className="download-section">
-          <input type="text" placeholder='paste your link' onChange={handleLinkChange} />
-          {showVideo && (
-            <div className="video-container">
-              <iframe 
-                width="560" 
-                height="315" 
-                src={`https://www.youtube.com/embed/${videoUrl}`} 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen>
-              </iframe>
+          <input
+            type="text"
+            placeholder="paste your link"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+          />
+        </div>
+        {videoId && (
+          <div className="video-details">
+            <iframe
+              width="120"
+              height="90"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              frameBorder="0"
+              allowFullScreen
+              className="thumbnail"
+            ></iframe>
+            <div className="video-info">
+              <h2 className="title">Video Title</h2>
+              <p className="duration">Video Duration</p>
               <div className="download-options">
-                <button className='download' onClick={handleConvert}>Download</button>
-                <select className='format-select'>
-                  <option>MP4 720p</option>
-                  <option>MP4 1080p</option>
-                  <option>MP4 4K</option>
+                <button className="download-button" onClick={handleConvert}>Download</button>
+                <select className="format-select">
+                  <option value="mp4_720">MP4 720</option>
+                  <option value="mp4_1080">MP4 1080</option>
+                  <option value="mp4_1440">MP4 1440</option>
+                  <option value="mp4_2160">MP4 4K</option>
                 </select>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <CookieConsent
