@@ -8,6 +8,7 @@ const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const [videoId, setVideoId] = useState('');
   const [cookieConsent, setCookieConsent] = useState(false);
+  const [selectedFormat, setSelectedFormat] = useState('mp4_1080');
 
   useEffect(() => {
     const consent = document.cookie.split('; ').find(row => row.startsWith('cookieConsent='));
@@ -40,6 +41,7 @@ const Homepage = () => {
       // Here you can handle the video download logic
       console.log("Video URL:", videoUrl);
       console.log("Converted Video ID:", videoId);
+      console.log("Selected Format:", selectedFormat);
     } catch (error) {
       console.error(error);
     }
@@ -78,11 +80,15 @@ const Homepage = () => {
               <p className="duration">Video Duration</p>
               <div className="download-options">
                 <button className="download-button" onClick={handleConvert}>Download</button>
-                <select className="format-select">
-                  <option value="mp4_720">MP4 720</option>
-                  <option value="mp4_1080">MP4 1080</option>
-                  <option value="mp4_1440">MP4 1440</option>
-                  <option value="mp4_2160">MP4 4K</option>
+                <select
+                  className="format-select"
+                  value={selectedFormat}
+                  onChange={(e) => setSelectedFormat(e.target.value)}
+                >
+                  <option value="mp4_1080">MP4 1080p</option>
+                  <option value="mp4_720">MP4 720p</option>
+                  <option value="mp4_480">MP4 480p</option>
+                  <option value="mp4_240">MP4 240p</option>
                 </select>
               </div>
             </div>
@@ -91,7 +97,7 @@ const Homepage = () => {
       </div>
 
       <CookieConsent
-      debug={true}
+        debug={true}
         location="bottom"
         buttonText="Accept"
         cookieName="cookieConsent"
