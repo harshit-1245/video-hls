@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 app.post("/convert", async (req, res) => {
-  const { url } = req.body;
+  const { url, format } = req.body;
 
   if (!url || !ytdl.validateURL(url)) {
     return res.status(400).json({ error: 'Invalid YouTube URL' });
@@ -54,17 +54,40 @@ app.post("/convert", async (req, res) => {
 
     await downloadProcess;
 
-    const outputFilePath = path.join(outputPath, "video_144p.mp4");
-    const command = `ffmpeg -i ${videoPath} -vf scale=256:144 -codec:v libx264 -codec:a aac ${outputFilePath}`;
+    let outputFilePath;
+    let command;
+
+    switch (format) {
+      case 'mp4_1080':
+        outputFilePath = path.join(outputPath, "video_1080p.mp4");
+        command = `ffmpeg -i ${videoPath} -vf scale=1920:1080 -codec:v libx264 -codec:a aac ${outputFilePath}`;
+        break;
+      case 'mp4_720':
+        outputFilePath = path.join(outputPath, "video_720p.mp4");
+        command = `ffmpeg -i ${videoPath} -vf scale=1280:720 -codec:v libx264 -codec:a aac ${outputFilePath}`;
+        break;
+      case 'mp4_480':
+        outputFilePath = path.join(outputPath, "video_480p.mp4");
+        command = `ffmpeg -i ${videoPath} -vf scale=854:480 -codec:v libx264 -codec:a aac ${outputFilePath}`;
+        break;
+      case 'mp4_240':
+        outputFilePath = path.join(outputPath, "video_240p.mp4");
+        command = `ffmpeg -i ${videoPath} -vf scale=426:240 -codec:v libx264 -codec:a aac ${outputFilePath}`;
+        break;
+      default:
+        outputFilePath = path.join(outputPath, "video_240p.mp4");
+        command = `ffmpeg -i ${videoPath} -vf scale=426:240 -codec:v libx264 -codec:a aac ${outputFilePath}`;
+        break;
+    }
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return res.status(500).json({ error: 'Video conversion failed', details: error.message });
       }
-      const videoUrl = `http://localhost:8000/uploads/courses/${lessonId}/video_144p.mp4`;
+      const videoUrl = `http://localhost:8000/uploads/courses/${lessonId}/${path.basename(outputFilePath)}`;
       res.json({
-        message: "Video converted to 144p MP4 format",
+        message: `Video converted to ${format} format`,
         videoUrl: videoUrl,
         lessonId: lessonId
       });

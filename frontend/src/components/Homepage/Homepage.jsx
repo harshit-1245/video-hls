@@ -3,6 +3,7 @@ import Lottie from 'lottie-react';
 import './Homepage.css';
 import animated from '../../assets/animation.json';
 import CookieConsent from "react-cookie-consent";
+import axios from "axios";
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState('');
@@ -38,10 +39,15 @@ const Homepage = () => {
     }
 
     try {
-      // Here you can handle the video download logic
-      console.log("Video URL:", videoUrl);
-      console.log("Converted Video ID:", videoId);
-      console.log("Selected Format:", selectedFormat);
+      const response = await axios.post("http://localhost:8000/convert", {
+        url: videoUrl,
+        format: selectedFormat
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log("Converted Video URL:", response.data.videoUrl);
     } catch (error) {
       console.error(error);
     }
