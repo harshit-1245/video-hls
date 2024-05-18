@@ -92,7 +92,7 @@ const Homepage = () => {
 
       <CookieConsent
       debug={true}
-        // location="bottom"
+        location="bottom"
         buttonText="Accept"
         cookieName="cookieConsent"
         style={{ background: "#2B373B", color: "white" }}
