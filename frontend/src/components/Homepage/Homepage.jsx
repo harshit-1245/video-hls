@@ -1,30 +1,24 @@
-import React, { useState } from 'react';
-import Lottie from 'lottie-react'; 
+import React, { useState, useEffect } from 'react';
+import Lottie from 'lottie-react';
 import './Homepage.css';
 import animated from '../../assets/animation.json';
-import axios from "axios";
 
 const Homepage = () => {
   const [videoUrl, setVideoUrl] = useState('');
-  const [convertedVideoUrl, setConvertedVideoUrl] = useState('');
-  const [error, setError] = useState('');
+  const [videoId, setVideoId] = useState('');
 
-  const handleConvert = async () => {
-    try {
-      setError('');
-      setConvertedVideoUrl('');
-
-      const response = await axios.post("http://localhost:8000/convert", { url: videoUrl });
-
-      if (response.data.videoUrl) {
-        setConvertedVideoUrl(response.data.videoUrl);
-      } else {
-        setError('Failed to convert video.');
+  useEffect(() => {
+    if (videoUrl) {
+      const id = getVideoId(videoUrl);
+      if (id) {
+        setVideoId(id);
       }
-    } catch (error) {
-      console.error(error);
-      setError('An error occurred while converting the video.');
     }
+  }, [videoUrl]);
+
+  const getVideoId = (url) => {
+    const urlObj = new URL(url);
+    return urlObj.searchParams.get('v') || urlObj.pathname.split('/')[1];
   };
 
   return (
@@ -40,21 +34,34 @@ const Homepage = () => {
         <div className="download-section">
           <input
             type="text"
-            placeholder='Paste your link'
+            placeholder="paste your link"
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
           />
-          <button className='download' onClick={handleConvert}>Convert</button>
         </div>
-        {/* {convertedVideoUrl && (
-          <div className="result">
-            <p>Converted video available at:</p>
-            <a href={convertedVideoUrl} target="_blank" rel="noopener noreferrer">{convertedVideoUrl}</a>
-          </div>
-        )} */}
-        {error && (
-          <div className="error">
-            <p>{error}</p>
+        {videoId && (
+          <div className="video-details">
+            <iframe
+              width="120"
+              height="90"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              frameBorder="0"
+              allowFullScreen
+              className="thumbnail"
+            ></iframe>
+            <div className="video-info">
+              <h2 className="title">Video Title</h2>
+              <p className="duration">Video Duration</p>
+              <div className="download-options">
+                <button className="download-button">Download</button>
+                <select className="format-select">
+                  <option value="mp4_720">MP4 720</option>
+                  <option value="mp4_1080">MP4 1080</option>
+                  <option value="mp4_1440">MP4 1440</option>
+                  <option value="mp4_2160">MP4 4K</option>
+                </select>
+              </div>
+            </div>
           </div>
         )}
       </div>
