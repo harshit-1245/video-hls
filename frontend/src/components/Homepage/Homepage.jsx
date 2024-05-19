@@ -103,7 +103,7 @@ const Homepage = () => {
         )}
       </div>
 
-      <CookieConsent
+      {/* <CookieConsent
         debug={true}
         location="bottom"
         buttonText="Accept"
@@ -114,7 +114,7 @@ const Homepage = () => {
         onAccept={() => setCookieConsent(true)}
       >
         This website uses cookies to enhance the user experience.
-      </CookieConsent>
+      </CookieConsent> */}
     </>
   );
 }
