@@ -1,8 +1,10 @@
 import React from 'react'
-import { FaFacebook } from "react-icons/fa";
+
 import { FaSquareXTwitter } from "react-icons/fa6";
 import { FaGithub } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
+import { LiaQuora } from "react-icons/lia";
+
 import "./Footer.css"
 
 const Footer = () => {
@@ -30,10 +32,10 @@ const Footer = () => {
         <div class="footer-col">
           <h4>follow us</h4>
           <div class="social-links">
-            <a href="#"><i class="fab fa-facebook-f"><FaFacebook /></i></a>
-            <a href="#"><i class="fab fa-twitter"><FaSquareXTwitter/></i></a>
-            <a href="#"><i class="fab fa-instagram"><FaGithub/></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"><FaLinkedin/></i></a>
+            <a href="https://www.quora.com/profile/Harshit-Singh-1289"><i class="fab fa-facebook-f"><LiaQuora/></i></a>
+            <a href="https://x.com/IshitRajput2"><i class="fab fa-twitter"><FaSquareXTwitter/></i></a>
+            <a href="https://www.github.com/harshit-1245"><i class="fab fa-instagram"><FaGithub/></i></a>
+            <a href="https://www.linkedin.com/in/harshit-singh-13810b186"><i class="fab fa-linkedin-in"><FaLinkedin/></i></a>
           </div>
         </div>
       </div>
