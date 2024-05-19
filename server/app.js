@@ -105,6 +105,12 @@ app.post("/convert", async (req, res) => {
   }
 });
 
+app.post("/accept-cookies",(req,res)=>{
+  res.cookie('cookieConsent', 'accepted', { maxAge: 365 * 24 * 60 * 60 * 1000 });
+  
+  res.send('Cookies accepted');
+})
+
 const __dirname = path.resolve();
 app.listen(8000, () => {
   console.log("App is listening at port 8000...");

@@ -12,33 +12,40 @@ const Homepage = () => {
   const [selectedFormat, setSelectedFormat] = useState('mp4_1080');
 
   useEffect(() => {
-    const consent = document.cookie.split('; ').find(row => row.startsWith('cookieConsent='));
-    if (consent && consent.split('=')[1] === 'true') {
-      setCookieConsent(true);
-    }
+    const checkCookieConsent = async () => {
+      try {
+        const consent = document.cookie.split('; ').find(row => row.startsWith('cookieConsent='));
+        if (consent && consent.split('=')[1] === 'true') {
+          setCookieConsent(true);
+        }
+      } catch (error) {
+        console.error('Error checking cookie consent:', error);
+      }
+    };
+    checkCookieConsent();
   }, []);
 
   useEffect(() => {
+    const extractVideoId = (url) => {
+      const urlObj = new URL(url);
+      return urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop();
+    };
+
     if (videoUrl) {
-      const id = getVideoId(videoUrl);
+      const id = extractVideoId(videoUrl);
       if (id) {
         setVideoId(id);
       }
     }
   }, [videoUrl]);
 
-  const getVideoId = (url) => {
-    const urlObj = new URL(url);
-    return urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop();
-  };
-
   const handleConvert = async () => {
-    if (!cookieConsent) {
-      alert('Please accept cookies to download videos.');
-      return;
-    }
-
     try {
+      if (!cookieConsent) {
+        alert('Please accept cookies to download videos.');
+        return;
+      }
+
       const response = await axios.post("http://localhost:8000/convert", {
         url: videoUrl,
         format: selectedFormat
@@ -50,7 +57,18 @@ const Homepage = () => {
       });
       console.log("Converted Video URL:", response.data.videoUrl);
     } catch (error) {
-      console.error(error);
+      console.error('Error converting video:', error);
+      // Handle error, show a message to the user, etc.
+    }
+  };
+
+  const handleAcceptCookie = async () => {
+    try {
+      await axios.post("http://localhost:8000/accept-cookies");
+      setCookieConsent(true);
+    } catch (error) {
+      console.error('Error accepting cookies:', error);
+      // Handle error, show a message to the user, etc.
     }
   };
 
@@ -60,14 +78,14 @@ const Homepage = () => {
         <div className="content">
           <div className="text-content">
             <h1>Welcome to Youtofy</h1>
-            <p>Download YouTube videos into 4k,1080p,720p,480p,360p,240p,144p</p>
+            <p>Download YouTube videos into various formats.</p>
           </div>
           <Lottie animationData={animated} loop={true} className="animation" />
         </div>
         <div className="download-section">
           <input
             type="text"
-            placeholder="paste your link"
+            placeholder="Paste your link"
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
           />
@@ -111,7 +129,7 @@ const Homepage = () => {
         style={{ background: "#2B373B", color: "white" }}
         buttonStyle={{ color: "#4e503b", fontSize: "13px" }}
         expires={150}
-        onAccept={() => setCookieConsent(true)}
+        onAccept={handleAcceptCookie}
       >
         This website uses cookies to enhance the user experience.
       </CookieConsent> */}
