@@ -1,10 +1,11 @@
-import express from "express";
-import cors from "cors";
-import { v4 as uuidv4 } from "uuid";
-import path from "path";
-import fs from "fs";
-import { exec } from "child_process";
-import ytdl from "ytdl-core";
+import express from 'express';
+import cors from 'cors';
+import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
+import fs from 'fs';
+import { exec } from 'child_process';
+import ytdl from 'ytdl-core';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 app.get('/', (req, res) => {
@@ -28,6 +30,10 @@ app.get('/', (req, res) => {
 });
 
 app.post("/convert", async (req, res) => {
+  if (!req.cookies.cookieConsent || req.cookies.cookieConsent !== 'true') {
+    return res.status(403).json({ error: 'Cookie consent is required' });
+  }
+
   const { url, format } = req.body;
 
   if (!url || !ytdl.validateURL(url)) {
@@ -35,7 +41,7 @@ app.post("/convert", async (req, res) => {
   }
 
   const lessonId = uuidv4();
-  const outputPath = path.join(__dirname, "uploads", "courses", lessonId);
+  const outputPath = path.join(path.resolve(), "uploads", "courses", lessonId);
   const videoPath = path.join(outputPath, "video.mp4");
 
   if (!fs.existsSync(outputPath)) {

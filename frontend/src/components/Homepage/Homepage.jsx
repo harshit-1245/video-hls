@@ -45,7 +45,8 @@ const Homepage = () => {
       }, {
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        withCredentials: true
       });
       console.log("Converted Video URL:", response.data.videoUrl);
     } catch (error) {
